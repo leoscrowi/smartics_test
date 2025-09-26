@@ -1,7 +1,10 @@
 from rest_framework import routers
 
-from src.infrastructure.api.views.expense import ExpenseViewSet
+from src.infrastructure.api.views.category import CategoryViewSet
+from src.infrastructure.factories.expense import ExpenseControllerFactory
 
-# router = routers.DefaultRouter()
-router.register(r'categories', Cate, basename='expenses')
+CategoryViewSet.viewset_factory = ExpenseControllerFactory()
+
+router = routers.DefaultRouter()
+router.register(r'categories', CategoryViewSet, basename='categories')
 

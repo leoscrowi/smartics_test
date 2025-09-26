@@ -6,8 +6,9 @@ from rest_framework.request import Request
 from rest_framework import status
 from django.utils import timezone
 
-from src.domain.core.expense import ExpenseEntity
+from src.domain.core.category import CategoryEntity
 from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotExist, EntityExists, EntityDatabaseError
+from src.infrastructure.controllers.category import CategoryController
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -34,8 +35,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             category_data = serializer.validated_data
-            category_entity = ExpenseEntity(
-                value=category_data['name'],
+            category_entity = CategoryEntity(
+                name=category_data['name'],
                 description=category_data['description'],
                 creator=request.user,
                 created_at=timezone.now(),
@@ -74,7 +75,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             category_data = serializer.validated_data
 
-            updated_category = self.controller.update(ExpenseEntity(
+            updated_category = self.controller.update(CategoryEntity(
                 id=category_id,
                 name=category_data['name'],
                 description=category_data['description'],
