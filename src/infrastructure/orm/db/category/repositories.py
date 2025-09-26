@@ -23,7 +23,7 @@ class CategoryDatabaseRepository:
                 category.save()
                 return category
             raise EntityExists(f'category with id: {category.id} already exists')
-        except Exception as e:
+        except Exception:
             raise EntityDatabaseError(f"Error saving category")
 
     def delete(self, category_id: uuid.UUID):
@@ -32,7 +32,7 @@ class CategoryDatabaseRepository:
             category.delete()
         except CategoryEntity.DoesNotExist:
             raise EntityDoesNotExist(f'category with id: {category_id} does not exist')
-        except Exception as e:
+        except Exception:
             raise EntityDatabaseError(f'Error deleting category')
 
     def update(self, category: CategoryEntity) -> CategoryEntity:
@@ -49,5 +49,5 @@ class CategoryDatabaseRepository:
                 category.id = uuid.uuid4()
                 category.save()
                 return category
-        except Exception as e:
+        except Exception:
             raise EntityDatabaseError(f'Error updating category')

@@ -29,4 +29,4 @@ class ExpenseControllerFactory:
     @staticmethod
     def get():
         usecase = ExpenseUseCaseFactory.get()
-        return
+        return ExpenseControllerFactory(usecase)

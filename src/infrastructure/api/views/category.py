@@ -43,7 +43,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
                 updated_at=timezone.now()
             )
 
-            self.controller.create(expense=category_entity)
+            self.controller.create(category=category_entity)
             response_serializer = self.get_serializer(category_entity)
             return Response(data=response_serializer.data, status=status.HTTP_201_CREATED)
         except EntityExists:

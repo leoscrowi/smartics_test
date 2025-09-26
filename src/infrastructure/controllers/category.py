@@ -15,11 +15,11 @@ class CategoryController:
     def get_user_categories(self, user_id: uuid.UUID) -> List[CategoryEntity]:
         return self.category_usecase.get_user_categories(user_id)
 
-    def save(self, expense: CategoryEntity) -> CategoryEntity:
-        return self.category_usecase.save(expense)
+    def save(self, category: CategoryEntity) -> CategoryEntity:
+        return self.category_usecase.save(category)
 
     def delete(self, category_id: uuid.UUID):
         self.category_usecase.delete(category_id)
 
-    def update(self, expense: CategoryEntity) -> CategoryEntity:
-        return self.category_usecase.update(expense)
+    def update(self, category: CategoryEntity) -> CategoryEntity:
+        return self.category_usecase.update(category)
