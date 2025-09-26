@@ -1,3 +1,4 @@
+from src.infrastructure.controllers.expense import ExpenseController
 import uuid
 
 from rest_framework import viewsets
@@ -16,8 +17,9 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     def controller(self) -> ExpenseController:
         return self.viewset_factory.create()
 
-    def get(self, request: Request, expense_id: uuid.UUID, *args, **kwargs) -> Response:
+    def retrieve(self, request: Request, pk=None, *args, **kwargs) -> Response:
         try:
+            expense_id = uuid.UUID(str(pk))
             expense = self.controller.get(expense_id)
 
             if expense.creator_id != request.user.id:
@@ -37,6 +39,8 @@ class ExpenseViewSet(viewsets.ModelViewSet):
                 value=expense_data['value'],
                 description=expense_data['description'],
                 creator=request.user,
+                created_at=timezone.now(),
+                updated_at=timezone.now(),
             )
 
             if 'categories' in expense_data:
@@ -49,8 +53,9 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         except EntityDatabaseError:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def delete(self, request: Request, expense_id: uuid.UUID, *args, **kwargs) -> Response:
+    def destroy(self, request: Request, pk=None, *args, **kwargs) -> Response:
         try:
+            expense_id = uuid.UUID(str(pk))
             expense = self.controller.get(expense_id)
 
             if expense.creator_id != request.user.id:
@@ -61,8 +66,9 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         except EntityDoesNotExist:
             return Response({"error": "Entity not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    def update(self, request: Request, expense_id: uuid.UUID, *args, **kwargs) -> Response:
+    def update(self, request: Request, pk=None, *args, **kwargs) -> Response:
         try:
+            expense_id = uuid.UUID(str(pk))
             ex_expense_id = self.controller.get(expense_id)
             if ex_expense_id.creator_id != request.user.id:
                 return Response({"error": "Not allowed"}, status=status.HTTP_403_FORBIDDEN)
