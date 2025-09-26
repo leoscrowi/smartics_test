@@ -2,7 +2,7 @@ import uuid
 from typing import List
 
 from src.domain.core.expense import ExpenseEntity
-from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotExist, EntityExists
+from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotExist, EntityExists, EntityDatabaseError
 
 
 class ExpenseDatabaseRepository:
@@ -24,7 +24,7 @@ class ExpenseDatabaseRepository:
                 return expense
             raise EntityExists(f'category with id: {expense.id} already exists')
         except Exception as e:
-            raise Exception(f"Error saving category: {str(e)}")
+            raise EntityDatabaseError(f"Error saving category")
 
     def delete(self, expense_id: uuid.UUID):
         try:
@@ -33,7 +33,7 @@ class ExpenseDatabaseRepository:
         except ExpenseEntity.DoesNotExist:
             raise EntityDoesNotExist(f'category with id: {expense_id} does not exist')
         except Exception as e:
-            raise Exception(f'Error deleting category: {str(e)}')
+            raise EntityDatabaseError(f'Error deleting category')
 
     def update(self, expense: ExpenseEntity) -> ExpenseEntity:
         try:
@@ -44,10 +44,9 @@ class ExpenseDatabaseRepository:
                         if not field.startswith('_'):
                             setattr(expense, field, value)
                 expense.save()
-                return expense
             else:
                 expense.id = uuid.uuid4()
                 expense.save()
-                return expense
+            return expense
         except Exception as e:
-            raise Exception(f"Error updating category: {str(e)}")
+            raise EntityDatabaseError(f"Error updating category")

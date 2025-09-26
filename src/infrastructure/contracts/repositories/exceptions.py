@@ -12,3 +12,6 @@ class EntityDoesNotExist(EntityError):
 
 class EntityExists(EntityError):
     pass
+
+class EntityDatabaseError(EntityError):
+    pass
