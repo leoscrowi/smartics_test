@@ -2,7 +2,7 @@ import uuid
 from typing import List
 
 from src.domain.core.category import CategoryEntity
-from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotExist, EntityExists
+from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotExist, EntityExists, EntityDatabaseError
 
 
 class CategoryDatabaseRepository:
@@ -24,7 +24,7 @@ class CategoryDatabaseRepository:
                 return category
             raise EntityExists(f'category with id: {category.id} already exists')
         except Exception as e:
-            raise Exception(f"Error saving category: {str(e)}")
+            raise EntityDatabaseError(f"Error saving category")
 
     def delete(self, category_id: uuid.UUID):
         try:
@@ -33,7 +33,7 @@ class CategoryDatabaseRepository:
         except CategoryEntity.DoesNotExist:
             raise EntityDoesNotExist(f'category with id: {category_id} does not exist')
         except Exception as e:
-            raise Exception(f'Error deleting category: {str(e)}')
+            raise EntityDatabaseError(f'Error deleting category')
 
     def update(self, category: CategoryEntity) -> CategoryEntity:
         try:
@@ -50,4 +50,4 @@ class CategoryDatabaseRepository:
                 category.save()
                 return category
         except Exception as e:
-            raise Exception(f"Error updating category: {str(e)}")
+            raise EntityDatabaseError(f'Error updating category')
