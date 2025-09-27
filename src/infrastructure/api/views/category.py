@@ -6,7 +6,7 @@ from rest_framework.request import Request
 from rest_framework import status
 from django.utils import timezone
 
-from src.domain.core.category import CategoryEntity
+from src.domain.core.category.models import CategoryEntity
 from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotExist, EntityExists, EntityDatabaseError
 from src.infrastructure.controllers.category import CategoryController
 

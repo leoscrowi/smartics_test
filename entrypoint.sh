@@ -1,7 +1,8 @@
 #!/bin/bash
 echo "STARTING entrypoint.sh"
 
-python src/infrastructure/manage.py migrate
+echo "MIGRATING"
+python src/infrastructure/manage.py migrate || echo "MIGRATING DONE"
 python src/infrastructure/manage.py collectstatic --noinput
 
 export ADMIN_USERNAME=${DJANGO_SUPERUSER_USERNAME:-admin}

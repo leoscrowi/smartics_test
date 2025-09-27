@@ -1,7 +1,7 @@
 import uuid
 from typing import List
 
-from src.domain.core.category import CategoryEntity
+from src.domain.core.category.models import CategoryEntity
 
 class CategoryUsecase:
 

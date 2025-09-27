@@ -7,7 +7,7 @@ from rest_framework.request import Request
 from rest_framework import status
 from django.utils import timezone
 
-from src.domain.core.expense import ExpenseEntity
+from src.domain.core.expense.models import ExpenseEntity
 from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotExist, EntityExists, EntityDatabaseError
 
 

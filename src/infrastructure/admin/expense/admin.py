@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from src.domain.core.category import CategoryEntity
-from src.domain.core.expense import ExpenseCategory
+from src.domain.core.expense.models import ExpenseCategory
 
 
 class ExpenseCategoryInline(admin.TabularInline):

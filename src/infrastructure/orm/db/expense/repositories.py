@@ -1,7 +1,7 @@
 import uuid
 from typing import List
 
-from src.domain.core.expense import ExpenseEntity
+from src.domain.core.expense.models import ExpenseEntity
 from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotExist, EntityExists, EntityDatabaseError
 
 
