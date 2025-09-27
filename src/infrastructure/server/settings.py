@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import datetime
 import os
 from pathlib import Path
 
@@ -40,9 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    
+
+    # my own entities
     'src.infrastructure.orm.db.category',
     'src.infrastructure.orm.db.expense',
+
+    # for jwt auth
+    'rest_framework_simplejwt'
 ]
 
 MIDDLEWARE = [
@@ -79,6 +84,7 @@ WSGI_APPLICATION = 'server.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# db - pg
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -90,6 +96,22 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK = {
+'DEFAULT_AUTHENTICATION_CLASSES': (
+'rest_framework_simplejwt.authentication.JWTAuthentication',
+),
+'DEFAULT_PERMISSION_CLASSES': (
+'rest_framework.permissions.IsAuthenticated',
+),
+}
+
+SIMPLE_JWT = {
+'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=15),
+'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
+'ROTATE_REFRESH_TOKENS': False,
+'AUTH_HEADER_TYPES': ('Bearer',),
+'ALGORITHM': 'HS256',
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
