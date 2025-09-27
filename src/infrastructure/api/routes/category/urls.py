@@ -7,7 +7,7 @@ from src.infrastructure.factories.category import CategoryControllerFactory
 CategoryViewSet.viewset_factory = CategoryControllerFactory()
 
 router = routers.DefaultRouter()
-router.register(r'category', CategoryViewSet, basename='category')
+router.register(r'categories', CategoryViewSet, basename='categories')
 
 urlpatterns = [
     path('', include(router.urls))
