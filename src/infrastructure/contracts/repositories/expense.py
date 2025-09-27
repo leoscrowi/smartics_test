@@ -1,7 +1,7 @@
 import uuid
 from typing import List, Optional
 
-from src.domain.core.expense import ExpenseEntity
+from src.domain.core.expense.models import ExpenseEntity
 
 class ExpenseRepository:
 
