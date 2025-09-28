@@ -1,4 +1,5 @@
 from src.infrastructure.contracts.repositories.expense import ExpenseRepository
+from src.infrastructure.controllers.expense import ExpenseController
 from src.infrastructure.orm.db.expense.repositories import ExpenseDatabaseRepository
 from src.infrastructure.usecases.expense import ExpenseUsecase
 
@@ -13,7 +14,7 @@ class ExpenseRepositoryFactory:
 
     @staticmethod
     def get():
-        db_repo = ExpenseDatabaseRepository.get()
+        db_repo = ExpenseDatabaseRepositoryFactory.get()
         return ExpenseRepository(db_repo)
 
 class ExpenseUseCaseFactory:
@@ -29,4 +30,4 @@ class ExpenseControllerFactory:
     @staticmethod
     def get():
         usecase = ExpenseUseCaseFactory.get()
-        return ExpenseControllerFactory(usecase)
+        return ExpenseController(usecase)

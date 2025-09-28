@@ -1,3 +1,5 @@
+from src.domain.core.category.models import CategoryEntity
+from src.infrastructure.contracts.serializers.expense import ExpenseSerializer
 from src.infrastructure.controllers.expense import ExpenseController
 import uuid
 
@@ -12,6 +14,8 @@ from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotEx
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):
+    serializer_class = ExpenseSerializer
+    queryset = CategoryEntity.objects.all()
 
     @property
     def controller(self) -> ExpenseController:
@@ -19,7 +23,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request: Request, pk=None, *args, **kwargs) -> Response:
         try:
-            expense_id = uuid.UUID(str(pk))
+            expense_id = uuid.UUID(pk)
             expense = self.controller.get(expense_id)
 
             if expense.creator_id != request.user.id:
@@ -43,9 +47,13 @@ class ExpenseViewSet(viewsets.ModelViewSet):
                 updated_at=timezone.now(),
             )
 
+            self.controller.save(expense_entity)
             if 'categories' in expense_data:
-                expense_entity.categories.set(expense_data['categories'])
-            self.controller.create(expense_entity)
+                categories = CategoryEntity.objects.filter(
+                    id__in=expense_data['categories']
+                )
+                expense_entity.categories.set(categories)
+
             response_serializer = self.get_serializer(expense_entity)
             return Response(data=response_serializer.data, status=status.HTTP_201_CREATED)
         except EntityExists:
