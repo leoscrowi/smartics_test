@@ -5,7 +5,6 @@ from django.db import models
 
 from src.domain.core.category.models import CategoryEntity
 
-
 class ExpenseEntity(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     value = models.DecimalField(max_digits=10, decimal_places=2)

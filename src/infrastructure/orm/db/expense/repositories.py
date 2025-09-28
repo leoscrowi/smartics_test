@@ -9,7 +9,7 @@ class ExpenseDatabaseRepository:
 
     def get(self, expense_id: uuid.UUID) -> ExpenseEntity:
         try:
-            expense = ExpenseEntity.objects.get(id=expense_id)
+            expense = ExpenseEntity.objects.prefetch_related('categories').get(id=expense_id)
             return expense
         except ExpenseEntity.DoesNotExist:
             raise EntityDoesNotExist(f'expense with id: {expense_id} does not exist')
@@ -36,15 +36,15 @@ class ExpenseDatabaseRepository:
             if expense.id:
                 existing_expense = ExpenseEntity.objects.get(id=expense.id)
                 if existing_expense:
-                    updatable_fields = ['value', 'description', 'categories']
+                    updatable_fields = ['value', 'description']
                     for field in updatable_fields:
                         if hasattr(expense, field):
                             setattr(existing_expense, field, getattr(expense, field))
-                existing_expense.save()
-                return expense
+                    existing_expense.save()
+                return existing_expense
             else:
                 expense.id = uuid.uuid4()
                 expense.save()
             return expense
-        except Exception:
-            raise EntityDatabaseError(f"Error updating category")
+        except Exception as e:
+            raise EntityDatabaseError(f"Error updating category " + str(e))
