@@ -9,7 +9,7 @@ class CategoryController:
     def __init__(self, category_usecase: object):
         self.category_usecase = category_usecase
 
-    def get(self, category_id: uuid.UUID):
+    def get(self, category_id: uuid.UUID) -> CategoryEntity:
         return self.category_usecase.get(category_id)
 
     def get_user_categories(self, user_id: uuid.UUID) -> List[CategoryEntity]:

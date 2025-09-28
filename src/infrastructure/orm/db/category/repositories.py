@@ -11,7 +11,7 @@ class CategoryDatabaseRepository:
         category = CategoryEntity.objects.get(id=category_id)
         if not category:
             raise EntityDoesNotExist(f'category with id: {category_id} does not exist')
-        return CategoryEntity(**category)
+        return category
 
     def get_user_categories(self, user_id: uuid.UUID) -> List[CategoryEntity]:
         return list(CategoryEntity.objects.filter(creator_id=user_id))
