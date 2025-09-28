@@ -14,7 +14,7 @@ class CategoryRepositoryFactory:
 
     @staticmethod
     def get():
-        db_repo = CategoryDatabaseRepository.get()
+        db_repo = CategoryDatabaseRepositoryFactory.get()
         return CategoryRepository(db_repo)
 
 class CategoryUseCaseFactory:
@@ -25,7 +25,7 @@ class CategoryUseCaseFactory:
         return CategoryUsecase(db_repo)
 
 
-class CategoryControllerFactory():
+class CategoryControllerFactory:
 
     @staticmethod
     def get():

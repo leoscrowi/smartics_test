@@ -17,14 +17,9 @@ class CategoryDatabaseRepository:
         return list(CategoryEntity.objects.filter(creator_id=user_id))
 
     def save(self, category: CategoryEntity) -> CategoryEntity:
-        try:
-            if not category.id:
-                category.id = uuid.uuid4()
-                category.save()
-                return category
-            raise EntityExists(f'category with id: {category.id} already exists')
-        except Exception:
-            raise EntityDatabaseError(f"Error saving category")
+        category.id = uuid.uuid4()
+        category.save()
+        return category
 
     def delete(self, category_id: uuid.UUID):
         try:

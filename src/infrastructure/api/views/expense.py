@@ -15,7 +15,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     @property
     def controller(self) -> ExpenseController:
-        return self.viewset_factory.create()
+        return self.viewset_factory.get()
 
     def retrieve(self, request: Request, pk=None, *args, **kwargs) -> Response:
         try:

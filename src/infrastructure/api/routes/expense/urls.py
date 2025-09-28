@@ -6,7 +6,7 @@ from src.infrastructure.factories.expense import ExpenseControllerFactory
 
 ExpenseViewSet.viewset_factory = ExpenseControllerFactory()
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'expenses', ExpenseViewSet, basename='expenses')
 
 urlpatterns = [
