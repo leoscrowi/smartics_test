@@ -12,9 +12,6 @@ class ExpenseUsecase:
     def get(self, expense_id: uuid.UUID) -> ExpenseEntity:
         return self.expense_repo.get(expense_id)
 
-    def get_user_categories(self, user_id: uuid.UUID) -> List[ExpenseEntity]:
-        return self.expense_repo.get_user_expenses(user_id)
-
     def save(self, expense: ExpenseEntity) -> ExpenseEntity:
         return self.expense_repo.save(expense)
 

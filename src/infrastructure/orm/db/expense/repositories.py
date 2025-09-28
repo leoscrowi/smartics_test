@@ -14,9 +14,6 @@ class ExpenseDatabaseRepository:
         except ExpenseEntity.DoesNotExist:
             raise EntityDoesNotExist(f'expense with id: {expense_id} does not exist')
 
-    def get_user_expenses(self, user_id: uuid.UUID) -> List[ExpenseEntity]:
-        return list(ExpenseEntity.objects.filter(creator_id=user_id))
-
     def save(self, expense: ExpenseEntity) -> ExpenseEntity:
         expense.id = uuid.uuid4()
         expense.save()

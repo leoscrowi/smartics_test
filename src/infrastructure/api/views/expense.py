@@ -11,6 +11,7 @@ from django.utils import timezone
 
 from src.domain.core.expense.models import ExpenseEntity
 from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotExist, EntityExists, EntityDatabaseError
+from src.infrastructure.orm.db.expense.filters import ExpenseFilter
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):
@@ -106,3 +107,17 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_200_OK)
         except EntityDatabaseError as e:
             return Response({"error": "entity database error " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+    def list(self, request: Request, *args, **kwargs) -> Response:
+        try:
+            base_queryset = ExpenseEntity.objects.filter(creator_id=request.user.id)
+
+            expense_filter = ExpenseFilter(request.GET, queryset=base_queryset)
+            filtered_expenses = expense_filter.qs
+            serializer = ExpenseSerializer(filtered_expenses, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({"error": "unexpected error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
