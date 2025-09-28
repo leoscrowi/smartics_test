@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 from rest_framework import viewsets, serializers
@@ -11,7 +12,6 @@ from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotEx
 from src.infrastructure.contracts.serializers.category import CategorySerializer
 from src.infrastructure.controllers.category import CategoryController
 
-
 class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
 
@@ -21,16 +21,16 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request: Request, pk=None, *args, **kwargs) -> Response:
         try:
-            category_id = uuid.UUID(str(pk))
+            category_id = uuid.UUID(pk)
             category = self.controller.get(category_id)
 
             if category.creator_id != request.user.id:
-                return Response({"error": "Not allowed"}, status=status.HTTP_403_FORBIDDEN)
+                return Response({"error": "not allowed"}, status=status.HTTP_403_FORBIDDEN)
 
             serializer = self.get_serializer(category)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except EntityDoesNotExist:
-            return Response({"error": "Entity not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "entity not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         try:
@@ -57,34 +57,42 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request: Request, pk=None, *args, **kwargs) -> Response:
         try:
-            category_id = uuid.UUID(str(pk))
+            category_id = uuid.UUID(pk)
             category = self.controller.get(category_id)
 
             if category.creator_id != request.user.id:
-                return Response({"error": "Not allowed"}, status=status.HTTP_403_FORBIDDEN)
+                return Response({"error": "not allowed"}, status=status.HTTP_403_FORBIDDEN)
 
             self.controller.delete(category_id)
             return Response(status=status.HTTP_200_OK)
         except EntityDoesNotExist:
-            return Response({"error": "Entity not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "entity not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def update(self, request: Request, pk=None, *args, **kwargs) -> Response:
         try:
-            category_id = uuid.UUID(str(pk))
+            category_id = uuid.UUID(pk)
             ex_category = self.controller.get(category_id)
             if ex_category.creator_id != request.user.id:
-                return Response({"error": "Not allowed"}, status=status.HTTP_403_FORBIDDEN)
+                return Response({"error": "not allowed"}, status=status.HTTP_403_FORBIDDEN)
 
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             category_data = serializer.validated_data
 
-            updated_category = self.controller.update(CategoryEntity(
+            self.controller.update(CategoryEntity(
                 id=category_id,
                 name=category_data['name'],
                 updated_at=timezone.now(),
+                created_at=timezone.now(),
             ))
-            response_serializer = self.get_serializer(updated_category)
-            return Response(data=response_serializer.data, status=status.HTTP_200_OK)
-        except EntityDatabaseError:
-            return Response({"error": "Entity database error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(status=status.HTTP_200_OK)
+        except EntityDatabaseError as e:
+            return Response({"error": "entity database error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def list(self, request: Request, *args, **kwargs) -> Response:
+        try:
+            categories = self.controller.get_user_categories(request.user.id)
+            serializer = self.get_serializer(categories, many=True)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({"error": "unexpected error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
