@@ -88,3 +88,11 @@ class CategoryViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_200_OK)
         except EntityDatabaseError as e:
             return Response({"error": "entity database error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def list(self, request: Request, *args, **kwargs) -> Response:
+        try:
+            categories = self.controller.get_user_categories(request.user.id)
+            serializer = self.get_serializer(categories, many=True)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({"error": "unexpected error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
