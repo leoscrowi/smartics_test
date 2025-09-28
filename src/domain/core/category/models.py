@@ -12,11 +12,3 @@ class CategoryEntity(models.Model):
 
     class Meta:
         app_label = 'category'
-
-    @property
-    def creator_id(self):
-        if hasattr(self.creator, 'id'):
-            return self.creator.id
-        if isinstance(self.creator, dict):
-            return self.creator.get('id')
-        return None

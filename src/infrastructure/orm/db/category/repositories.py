@@ -8,10 +8,11 @@ from src.infrastructure.contracts.repositories.exceptions import EntityDoesNotEx
 class CategoryDatabaseRepository:
 
     def get(self, category_id: uuid.UUID) -> CategoryEntity:
-        category = CategoryEntity.objects.get(id=category_id)
-        if not category:
+        try:
+            category = CategoryEntity.objects.get(id=category_id)
+            return category
+        except CategoryEntity.DoesNotExist:
             raise EntityDoesNotExist(f'category with id: {category_id} does not exist')
-        return category
 
     def get_user_categories(self, user_id: uuid.UUID) -> List[CategoryEntity]:
         return list(CategoryEntity.objects.filter(creator_id=user_id))
@@ -28,21 +29,22 @@ class CategoryDatabaseRepository:
         except CategoryEntity.DoesNotExist:
             raise EntityDoesNotExist(f'category with id: {category_id} does not exist')
         except Exception:
-            raise EntityDatabaseError(f'Error deleting category')
+            raise EntityDatabaseError(f'error deleting category')
 
     def update(self, category: CategoryEntity) -> CategoryEntity:
         try:
             if category.id:
-                category = CategoryEntity.objects.get(id=category.id)
-                if category:
-                    for field, value in category.__dict__.items():
-                        if not field.startswith('_'):
-                            setattr(category, field, value)
-                category.save()
+                existing_category = CategoryEntity.objects.get(id=category.id)
+                if existing_category:
+                    updatable_fields = ['name', 'updated_at']
+                    for field in updatable_fields:
+                        if hasattr(category, field):
+                            setattr(existing_category, field, getattr(category, field))
+                existing_category.save()
                 return category
             else:
                 category.id = uuid.uuid4()
                 category.save()
                 return category
-        except Exception:
-            raise EntityDatabaseError(f'Error updating category')
+        except Exception as e:
+            raise EntityDatabaseError(f'error updating category: {str(e)}')
